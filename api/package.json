@@ -1,0 +1,78 @@
+{
+  "name": "blitzyxsc-plus",
+  "version": "1.0.0",
+  "description": "blitzyxsc-plus by Blitz (blitzlabx) — standalone no-auth X/Twitter data API server. Deploy anywhere.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "bun --hot src/index.ts",
+    "start": "bun src/index.ts",
+    "start:node": "tsx src/index.ts",
+    "build": "tsup src/index.ts --format esm,cjs --dts --out-dir dist",
+    "test": "bun test tests/",
+    "test:live": "bun test tests/live.test.ts",
+    "lint": "tsc --noEmit",
+    "deploy:vercel": "vercel deploy --prod",
+    "deploy:cloudflare": "wrangler deploy",
+    "deploy:netlify": "netlify deploy --prod",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "twitter",
+    "x",
+    "x.com",
+    "twitter-scraper",
+    "no-auth",
+    "fxtwitter",
+    "syndication",
+    "guest-token",
+    "scraper",
+    "api",
+    "rest",
+    "hono",
+    "blitzyxsc",
+    "blitzlabx",
+    "serverless",
+    "edge",
+    "cloudflare",
+    "vercel",
+    "netlify"
+  ],
+  "author": "Blitz (blitzlabx)",
+  "license": "MIT",
+  "homepage": "https://github.com/blitzlabx/blitzyxsc-plus",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blitzlabx/blitzyxsc-plus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/blitzlabx/blitzyxsc-plus/issues"
+  },
+  "dependencies": {
+    "hono": "^4.6.0",
+    "@hono/node-server": "^1.13.0",
+    "@hono/zod-validator": "^0.4.2",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "@types/node": "^20.10.0",
+    "@types/bun": "^1.1.0",
+    "tsx": "^4.7.0",
+    "tsup": "^8.0.0",
+    "wrangler": "^3.80.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./dist/index.cjs"
+    },
+    "./app": {
+      "import": "./src/app.ts",
+      "require": "./dist/app.cjs"
+    }
+  }
+}

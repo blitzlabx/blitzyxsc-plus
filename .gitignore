@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+.next/
+dist/
+build/
+
+# Logs
+*.log
+dev.log
+server.log
+
+# Env
+.env
+.env.local
+.env.production
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Bun
+bun.lockb
+
+# Tests
+.pytest_cache/
+coverage/
+.coverage

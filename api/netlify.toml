@@ -1,0 +1,38 @@
+[build]
+  command = "bun run build"
+  functions = "netlify/functions"
+  publish = "dist"
+
+[functions]
+  node_bundler = "esbuild"
+  directory = "netlify/functions"
+
+# Route all API calls through the serverless function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/api"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/"
+  to = "/.netlify/functions/api"
+  status = 200
+  force = false
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+    Cache-Control = "public, max-age=60, s-maxage=300, stale-while-revalidate=600"
+
+[build.environment]
+  NODE_VERSION = "20"

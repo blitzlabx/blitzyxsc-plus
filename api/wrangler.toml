@@ -1,0 +1,44 @@
+name = "blitzyxsc-plus"
+main = "src/adapters/cloudflare.ts"
+compatibility_date = "2024-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Author: Blitz (blitzlabx)
+
+# Workers settings
+[vars]
+RATE_LIMIT_PER_MIN = "60"
+DEFAULT_PROVIDER = "fxtwitter"
+
+# Optional: KV namespace for distributed caching
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = "your-kv-namespace-id"
+
+# Optional: Durable Objects for distributed rate limiting
+# [[durable_objects.bindings]]
+# name = "RATE_LIMIT"
+# class_name = "RateLimitDO"
+
+# Build configuration
+[build]
+command = "echo 'No build needed — TypeScript runs natively on Workers'"
+
+# Observability
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+# Limits
+[limits]
+cpu_ms = 10000
+
+# Routes — single-page app style (everything goes to the Worker)
+# routes = [
+#   { pattern = "blitzyxsc-plus.your-domain.workers.dev/*", zone_name = "your-domain.workers.dev" }
+# ]
+
+# Environment variables for production
+[env.production]
+name = "blitzyxsc-plus"
+vars = { RATE_LIMIT_PER_MIN = "60", NODE_ENV = "production" }
