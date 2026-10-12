@@ -167,10 +167,9 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
-      {/* Endpoint selector */}
-      <div className="flex flex-col gap-1.5">
-        <div className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+    <div className="grid gap-4 lg:grid-cols-[220px_1fr] lg:gap-6">
+      <div className="flex flex-row gap-1.5 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
+        <div className="mb-2 hidden shrink-0 text-xs font-medium uppercase tracking-wider text-muted-foreground lg:block">
           Endpoints
         </div>
         {ENDPOINTS.map((ep) => {
@@ -196,21 +195,20 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
         })}
       </div>
 
-      {/* Request + response panel */}
       <div className="flex flex-col gap-4">
-        <div className="rounded-lg border border-border bg-card/60 p-4">
+        <div className="rounded-lg border border-border bg-card/60 p-3 sm:p-4">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 text-xs">
+            <div className="flex min-w-0 flex-wrap items-center gap-2 text-xs">
               <Badge variant="outline" className="border-[var(--blitz)] text-[var(--blitz)]">
                 {endpoint.method}
               </Badge>
-              <code className="blitz-code text-foreground/90">{endpoint.path}</code>
+              <code className="blitz-code truncate text-foreground/90">{endpoint.path}</code>
             </div>
             <Button
               size="sm"
               onClick={sendRequest}
               disabled={loading}
-              className="bg-[var(--blitz)] text-[var(--blitz-foreground)] hover:bg-[var(--blitz)]/90"
+              className="shrink-0 bg-[var(--blitz)] text-[var(--blitz-foreground)] hover:bg-[var(--blitz)]/90"
             >
               {loading ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : <Play className="mr-1 h-3.5 w-3.5" />}
               Send
@@ -246,15 +244,14 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
           </div>
 
           <div className="mt-4 flex items-center gap-2 text-xs">
-            <span className="text-muted-foreground">URL:</span>
-            <code className="blitz-code flex-1 truncate text-[var(--blitz)]">{buildUrl()}</code>
+            <span className="shrink-0 text-muted-foreground">URL:</span>
+            <code className="blitz-code truncate text-[var(--blitz)]">{buildUrl()}</code>
           </div>
         </div>
 
-        {/* Response panel */}
-        <div className="rounded-lg border border-border bg-card/60 p-4">
+        <div className="rounded-lg border border-border bg-card/60 p-3 sm:p-4">
           <div className="mb-3 flex items-center justify-between gap-2 text-xs">
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               <span className="text-muted-foreground">Response</span>
               <AnimatePresence mode="wait">
                 {status !== null && (
@@ -287,16 +284,16 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
               )}
             </div>
             {response && (
-              <Button size="sm" variant="ghost" onClick={copyResponse} className="h-7 text-xs">
+              <Button size="sm" variant="ghost" onClick={copyResponse} className="h-7 shrink-0 text-xs">
                 {copied ? <Check className="mr-1 h-3 w-3" /> : <Copy className="mr-1 h-3 w-3" />}
-                {copied ? 'Copied' : 'Copy'}
+                <span className="hidden sm:inline">{copied ? 'Copied' : 'Copy'}</span>
               </Button>
             )}
           </div>
           <Textarea
             readOnly
             value={response || '// Press "Send" to make a request'}
-            className="blitz-code min-h-[320px] resize-y bg-background/60 font-mono text-xs"
+            className="blitz-code min-h-[280px] resize-y bg-background/60 font-mono text-[11px] sm:min-h-[320px] sm:text-xs"
             spellCheck={false}
           />
         </div>
