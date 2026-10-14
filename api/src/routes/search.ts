@@ -26,7 +26,7 @@ searchRoutes.get('/users', async (c) => {
         message: 'Missing required query param: q (the search query).',
         requestId: c.get('requestId'),
       },
-      400,
+      400 as any,
     );
   }
   if (q.length > 100) {
@@ -37,7 +37,7 @@ searchRoutes.get('/users', async (c) => {
         message: 'Query must be ≤ 100 characters.',
         requestId: c.get('requestId'),
       },
-      400,
+      400 as any,
     );
   }
 
@@ -66,7 +66,7 @@ searchRoutes.get('/', (c) => {
         hint: 'Only user search (typeahead) is available.',
         requestId: c.get('requestId'),
       },
-      400,
+      400 as any,
     );
   }
   // Forward to /users handler

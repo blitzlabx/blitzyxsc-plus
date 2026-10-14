@@ -5,6 +5,7 @@
  */
 
 import type { Context } from 'hono';
+import type { ContentfulStatusCode } from 'hono/utils/http-status';
 import {
   BlitzyxscError,
   BlitzyxscAuthError,
@@ -25,7 +26,7 @@ function statusFor(err: BlitzyxscError): number {
 
 export const blitzErrorMiddleware = (err: Error, c: Context) => {
   if (err instanceof BlitzyxscError) {
-    const status = statusFor(err);
+    const status = statusFor(err) as ContentfulStatusCode;
     // Convert "BlitzyxscNotFoundError" → "NOT_FOUND",
     // "BlitzyxscRateLimitError" → "RATE_LIMITED", etc.
     const rawName = err.constructor.name
@@ -60,6 +61,6 @@ export const blitzErrorMiddleware = (err: Error, c: Context) => {
       requestId: c.get('requestId'),
       durationMs: Date.now() - c.get('startTime'),
     },
-    500,
+    500 as ContentfulStatusCode,
   );
 };

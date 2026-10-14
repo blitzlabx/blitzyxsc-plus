@@ -12,8 +12,15 @@
 
 import { app } from '../app';
 
+// ExecutionContext is a Cloudflare Workers global. Declare a minimal
+// fallback type so this file typechecks on Node/Bun/Deno too.
+type ExecutionContextLike = {
+  waitUntil(promise: Promise<any>): void;
+  passThroughOnException?(): void;
+};
+
 export default {
-  async fetch(request: Request, env: any, ctx: ExecutionContext): Promise<Response> {
-    return app.fetch(request, env, ctx);
+  async fetch(request: Request, env: any, ctx: ExecutionContextLike): Promise<Response> {
+    return app.fetch(request, env, ctx as any);
   },
 };

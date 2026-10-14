@@ -23,7 +23,7 @@ statusRoutes.get('/:id', async (c) => {
         message: 'Tweet ID must be a numeric string (5-25 digits).',
         requestId: c.get('requestId'),
       },
-      400,
+      400 as any,
     );
   }
 

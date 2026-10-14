@@ -71,7 +71,7 @@ export const blitzRateLimit: MiddlewareHandler = async (c, next) => {
         retryAfter: Math.ceil((bucket.resetAt - now) / 1000),
         requestId: c.get('requestId'),
       },
-      429,
+      429 as any,
     );
   }
 

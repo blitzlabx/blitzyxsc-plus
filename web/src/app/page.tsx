@@ -4,23 +4,23 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   ArrowRight, Github, Zap, ShieldCheck, Server, Cloud, Code2, KeyRound,
   Twitter, Terminal, Clock, Heart, ChevronRight, Activity,
-  Cpu, Layers, Globe, Menu, X,
+  Cpu, Layers, Globe, Menu, X, Sparkles, Boxes, Gauge,
 } from 'lucide-react';
 import {
   BlitzBolt, BlitzGrid, BlitzScanlines, BlitzStatusDot,
-  BlitzTypewriter, BlitzMarquee, BlitzReveal,
+  BlitzTypewriter, BlitzMarquee, BlitzReveal, BlitzAurora,
+  BlitzSpringNumber, BlitzMagnetic, BlitzTiltCard,
 } from '@/components/blitz/animations';
 import { LivePlayground } from '@/components/blitz/live-playground';
 import { CodeBlock } from '@/components/blitz/code-block';
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen overflow-x-hidden">
+    <main className="relative min-h-screen-safe overflow-x-hidden">
       <Nav />
       <HeroSection />
       <MarqueeStrip />
@@ -36,6 +36,8 @@ export default function Home() {
   );
 }
 
+/* ─── NAV ─────────────────────────────────────────────────────────────── */
+
 function Nav() {
   const [open, setOpen] = useState(false);
   const links = [
@@ -46,20 +48,22 @@ function Nav() {
     { href: '#usage', label: 'Usage' },
   ];
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-        <a href="#" className="flex items-center gap-2">
-          <BlitzBolt className="h-6 w-6 text-[var(--blitz)]" />
+    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/50">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+        <a href="#" className="flex items-center gap-2.5">
+          <span className="relative flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--blitz)]/30 bg-[var(--blitz)]/5">
+            <BlitzBolt className="h-4 w-4 text-[var(--blitz)]" />
+          </span>
           <span className="blitz-code text-sm font-semibold tracking-tight sm:text-base">
             blitzyxsc<span className="text-[var(--blitz)]">-plus</span>
           </span>
         </a>
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-0.5 md:flex">
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
-              className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-[var(--blitz)]"
+              className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-all hover:bg-card/50 hover:text-[var(--blitz)]"
             >
               {l.label}
             </a>
@@ -72,23 +76,26 @@ function Nav() {
             rel="noreferrer"
             className="hidden sm:block"
           >
-            <Button variant="ghost" size="icon" aria-label="GitHub">
+            <Button variant="ghost" size="icon" aria-label="GitHub" className="h-9 w-9">
               <Github className="h-4 w-4" />
             </Button>
           </a>
           <a href="#playground" className="hidden sm:block">
-            <Button
-              size="sm"
-              className="bg-[var(--blitz)] text-[var(--blitz-foreground)] hover:bg-[var(--blitz)]/90"
-            >
-              Try it
-              <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-            </Button>
+            <BlitzMagnetic strength={0.25}>
+              <Button
+                size="sm"
+                className="bg-[var(--blitz)] text-[var(--blitz-foreground)] hover:bg-[var(--blitz)]/90"
+              >
+                Try it
+                <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+              </Button>
+            </BlitzMagnetic>
           </a>
           <button
             onClick={() => setOpen((v) => !v)}
-            className="rounded-md p-2 text-muted-foreground hover:text-foreground md:hidden"
+            className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-card hover:text-foreground md:hidden"
             aria-label="Menu"
+            aria-expanded={open}
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -99,21 +106,26 @@ function Nav() {
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
-          className="border-t border-border bg-card/60 px-4 py-3 md:hidden"
+          className="border-t border-border bg-card/80 px-4 py-3 backdrop-blur-xl md:hidden"
         >
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="flex items-center justify-between border-b border-border/50 py-2 text-sm text-muted-foreground last:border-0 hover:text-[var(--blitz)]"
+              className="flex items-center justify-between border-b border-border/40 py-2.5 text-sm text-muted-foreground last:border-0 hover:text-[var(--blitz)]"
             >
               {l.label}
               <ChevronRight className="h-4 w-4" />
             </a>
           ))}
           <div className="mt-3 flex gap-2">
-            <a href="https://github.com/blitzlabx/blitzyxsc-plus" target="_blank" rel="noreferrer" className="flex-1">
+            <a
+              href="https://github.com/blitzlabx/blitzyxsc-plus"
+              target="_blank"
+              rel="noreferrer"
+              className="flex-1"
+            >
               <Button size="sm" variant="outline" className="w-full border-border">
                 <Github className="mr-1.5 h-3.5 w-3.5" /> GitHub
               </Button>
@@ -133,6 +145,8 @@ function Nav() {
   );
 }
 
+/* ─── HERO ────────────────────────────────────────────────────────────── */
+
 function HeroSection() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
@@ -141,32 +155,39 @@ function HeroSection() {
 
   return (
     <section ref={ref} className="relative isolate overflow-hidden">
+      <BlitzAurora />
       <BlitzGrid />
       <BlitzScanlines />
+
       <motion.div
         style={{ y, opacity }}
-        className="relative z-10 mx-auto max-w-6xl px-4 pt-20 pb-16 sm:px-6 sm:pt-32 lg:pt-40"
+        className="relative z-10 mx-auto max-w-6xl px-4 pt-16 pb-16 sm:px-6 sm:pt-24 sm:pb-20 lg:pt-32"
       >
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-6 flex justify-center sm:mb-8"
+          className="mb-5 flex justify-center sm:mb-7"
         >
-          <div className="inline-flex items-center gap-2 rounded-full border border-[var(--blitz)]/30 bg-[var(--blitz)]/5 px-3 py-1 text-xs sm:px-4 sm:py-1.5">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[var(--blitz)]/30 bg-[var(--blitz)]/5 px-3 py-1 text-xs backdrop-blur-sm sm:px-4 sm:py-1.5">
             <BlitzStatusDot />
-            <span className="text-muted-foreground">v1.0.0 — live, no auth</span>
+            <span className="text-muted-foreground">
+              v1.1.0 · live, no auth
+            </span>
           </div>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
+          initial={{ opacity: 0, scale: 0.7 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           className="mb-6 flex justify-center sm:mb-8"
         >
           <div className="relative">
-            <BlitzBolt className="h-16 w-16 text-[var(--blitz)] blitz-text-glow sm:h-20 sm:w-20" />
+            <div className="absolute inset-0 blur-2xl opacity-60">
+              <BlitzBolt className="h-20 w-20 text-[var(--blitz)] sm:h-24 sm:w-24" />
+            </div>
+            <BlitzBolt className="relative h-16 w-16 text-[var(--blitz)] blitz-text-glow sm:h-20 sm:w-20" />
           </div>
         </motion.div>
 
@@ -174,7 +195,7 @@ function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="text-center font-mono text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl"
+          className="text-center font-mono text-[2.5rem] font-bold tracking-tight leading-[1.05] sm:text-6xl lg:text-7xl"
         >
           <span className="text-foreground">blitzyxsc</span>
           <span className="text-[var(--blitz)] blitz-text-glow">-plus</span>
@@ -186,7 +207,7 @@ function HeroSection() {
           transition={{ delay: 0.6 }}
           className="mt-5 text-center sm:mt-6"
         >
-          <div className="blitz-code inline-block rounded-lg border border-border bg-card/60 px-3 py-2 text-xs text-muted-foreground sm:px-4 sm:text-sm">
+          <div className="blitz-code inline-block rounded-lg border border-border bg-card/60 px-3 py-2 text-xs text-muted-foreground backdrop-blur-sm sm:px-4 sm:text-sm">
             <span className="text-[var(--blitz)]">$</span>{' '}
             <BlitzTypewriter
               text="fetch tweets without an API key."
@@ -201,32 +222,42 @@ function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 0.8 }}
-          className="mx-auto mt-6 max-w-2xl px-2 text-center text-base text-muted-foreground sm:mt-8 sm:text-lg"
+          className="mx-auto mt-5 max-w-2xl px-2 text-center text-base text-muted-foreground sm:mt-7 sm:text-lg"
         >
           A standalone REST API for fetching X/Twitter data — posts,
           profiles, replies, trends, followers — without touching the
-          developer console. Deploy to Vercel, Cloudflare, Netlify,
-          Deno, Bun, or your own box.
+          developer console. Deploy to Vercel, Cloudflare, Netlify, Deno,
+          Bun, or your own box.
         </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.8 }}
-          className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:mt-10"
+          className="mt-7 flex flex-wrap items-center justify-center gap-3 sm:mt-9"
         >
-          <a href="#playground">
+          <BlitzMagnetic strength={0.2}>
+            <a href="#playground">
+              <Button
+                size="lg"
+                className="bg-[var(--blitz)] text-[var(--blitz-foreground)] hover:bg-[var(--blitz)]/90 shadow-[0_0_30px_-5px_var(--blitz-glow)]"
+              >
+                <Terminal className="mr-2 h-4 w-4" />
+                Try it live
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </a>
+          </BlitzMagnetic>
+          <a
+            href="https://github.com/blitzlabx/blitzyxsc-plus"
+            target="_blank"
+            rel="noreferrer"
+          >
             <Button
               size="lg"
-              className="bg-[var(--blitz)] text-[var(--blitz-foreground)] hover:bg-[var(--blitz)]/90"
+              variant="outline"
+              className="border-border hover:border-[var(--blitz)] hover:bg-card/50"
             >
-              <Terminal className="mr-2 h-4 w-4" />
-              Try it live
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </a>
-          <a href="https://github.com/blitzlabx/blitzyxsc-plus" target="_blank" rel="noreferrer">
-            <Button size="lg" variant="outline" className="border-border hover:border-[var(--blitz)]">
               <Github className="mr-2 h-4 w-4" />
               GitHub
             </Button>
@@ -237,29 +268,36 @@ function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2.1, duration: 0.8 }}
-          className="mx-auto mt-10 grid max-w-3xl grid-cols-2 gap-2 sm:mt-16 sm:gap-4 lg:grid-cols-4"
+          className="mx-auto mt-10 grid max-w-3xl grid-cols-2 gap-2 sm:mt-14 sm:gap-4 lg:grid-cols-4"
         >
           {[
             { label: 'Endpoints', value: '14' },
             { label: 'Auth required', value: 'None' },
             { label: 'Cold start', value: '~0ms' },
             { label: 'Languages', value: 'TS-only' },
-          ].map((s) => (
-            <div
+          ].map((s, i) => (
+            <motion.div
               key={s.label}
-              className="rounded-lg border border-border bg-card/40 p-2.5 text-center sm:p-3"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.1 + i * 0.08 }}
+              className="blitz-glass rounded-xl p-3 text-center sm:p-4"
             >
-              <div className="blitz-code text-lg font-semibold text-[var(--blitz)] sm:text-xl">
+              <div className="blitz-code text-lg font-bold text-[var(--blitz)] sm:text-2xl">
                 {s.value}
               </div>
-              <div className="mt-1 text-[10px] text-muted-foreground sm:text-xs">{s.label}</div>
-            </div>
+              <div className="mt-1 text-[10px] text-muted-foreground sm:text-xs">
+                {s.label}
+              </div>
+            </motion.div>
           ))}
         </motion.div>
       </motion.div>
     </section>
   );
 }
+
+/* ─── MARQUEE ─────────────────────────────────────────────────────────── */
 
 function MarqueeStrip() {
   const items = [
@@ -269,12 +307,12 @@ function MarqueeStrip() {
     'BUN-READY', 'NODE-READY', 'EDGE-READY',
   ];
   return (
-    <div className="relative border-y border-border bg-card/30 py-2.5 sm:py-3">
-      <BlitzMarquee speed={50}>
+    <div className="relative border-y border-border/60 bg-card/30 py-2.5 backdrop-blur-sm sm:py-3">
+      <BlitzMarquee speed={45}>
         {items.map((it) => (
           <span
             key={it}
-            className="mx-4 inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:mx-6 sm:text-xs"
+            className="mx-3 inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:mx-6 sm:text-xs"
           >
             <span className="text-[var(--blitz)]">◆</span>
             {it}
@@ -285,29 +323,42 @@ function MarqueeStrip() {
   );
 }
 
+/* ─── STATS ──────────────────────────────────────────────────────────── */
+
 function StatsBar() {
   return (
-    <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-20">
-      <BlitzReveal className="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-4">
+    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16">
+      <BlitzReveal className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-4">
         {[
-          { icon: Zap, label: 'Avg response', value: '~300ms', note: 'cold cache' },
-          { icon: ShieldCheck, label: 'Auth required', value: '0', note: 'none, ever' },
-          { icon: Activity, label: 'Uptime', value: '99.9%', note: 'community-hosted' },
-          { icon: Layers, label: 'Endpoints', value: '14', note: 'all read-only' },
-        ].map((s) => (
-          <Card key={s.label} className="blitz-card-hover border-border bg-card/60">
-            <CardContent className="p-3 sm:p-5">
-              <s.icon className="mb-2 h-4 w-4 text-[var(--blitz)] sm:mb-3 sm:h-5 sm:w-5" />
-              <div className="blitz-code text-xl font-bold text-foreground sm:text-2xl">{s.value}</div>
-              <div className="mt-0.5 text-xs text-muted-foreground sm:mt-1 sm:text-sm">{s.label}</div>
-              <div className="mt-0.5 text-[10px] text-muted-foreground/70 sm:text-xs">{s.note}</div>
-            </CardContent>
-          </Card>
+          { icon: Gauge, label: 'Avg response', value: 312, suffix: 'ms', note: 'cold cache' },
+          { icon: ShieldCheck, label: 'Auth required', value: 0, suffix: '', note: 'none, ever' },
+          { icon: Activity, label: 'Uptime', value: 99, suffix: '.9%', note: 'community-hosted' },
+          { icon: Layers, label: 'Endpoints', value: 14, suffix: '', note: 'all read-only' },
+        ].map((s, i) => (
+          <BlitzTiltCard key={s.label} max={4}>
+            <Card className="blitz-card-hover h-full border-border/60 bg-card/40 backdrop-blur-sm">
+              <CardContent className="p-3 sm:p-5">
+                <s.icon className="mb-2 h-4 w-4 text-[var(--blitz)] sm:mb-3 sm:h-5 sm:w-5" />
+                <div className="blitz-code text-xl font-bold text-foreground sm:text-2xl">
+                  <BlitzSpringNumber value={s.value} />
+                  <span className="text-[var(--blitz)]">{s.suffix}</span>
+                </div>
+                <div className="mt-0.5 text-xs text-muted-foreground sm:mt-1 sm:text-sm">
+                  {s.label}
+                </div>
+                <div className="mt-0.5 text-[10px] text-muted-foreground/70 sm:text-xs">
+                  {s.note}
+                </div>
+              </CardContent>
+            </Card>
+          </BlitzTiltCard>
         ))}
       </BlitzReveal>
     </section>
   );
 }
+
+/* ─── FEATURES ───────────────────────────────────────────────────────── */
 
 function FeaturesSection() {
   const features = [
@@ -354,9 +405,9 @@ function FeaturesSection() {
   ];
 
   return (
-    <section id="features" className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-20">
+    <section id="features" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20">
       <BlitzReveal className="mb-8 max-w-3xl sm:mb-12">
-        <Badge variant="outline" className="mb-3 border-[var(--blitz)]/40 text-[var(--blitz)] sm:mb-4">
+        <Badge variant="outline" className="mb-3 border-[var(--blitz)]/40 bg-[var(--blitz)]/5 text-[var(--blitz)] sm:mb-4">
           <Cpu className="mr-1.5 h-3 w-3" />
           What you get
         </Badge>
@@ -373,15 +424,21 @@ function FeaturesSection() {
       <div className="grid gap-3 sm:gap-5 md:grid-cols-2 lg:grid-cols-4">
         {features.map((f, i) => (
           <BlitzReveal key={f.title} delay={i * 0.05}>
-            <Card className="blitz-card-hover h-full border-border bg-card/60">
-              <CardHeader className="p-4 sm:p-6">
-                <f.icon className="mb-2 h-5 w-5 text-[var(--blitz)] sm:mb-2 sm:h-6 sm:w-6" />
-                <CardTitle className="text-sm font-semibold sm:text-base">{f.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
-                <p className="text-xs text-muted-foreground sm:text-sm">{f.body}</p>
-              </CardContent>
-            </Card>
+            <BlitzTiltCard max={5} className="h-full">
+              <Card className="blitz-card-hover h-full border-border/60 bg-card/40 backdrop-blur-sm">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--blitz)]/30 bg-[var(--blitz)]/5">
+                    <f.icon className="h-4 w-4 text-[var(--blitz)] sm:h-5 sm:w-5" />
+                  </div>
+                  <h3 className="mb-2 text-sm font-semibold text-foreground sm:text-base">
+                    {f.title}
+                  </h3>
+                  <p className="text-xs leading-relaxed text-muted-foreground sm:text-sm">
+                    {f.body}
+                  </p>
+                </CardContent>
+              </Card>
+            </BlitzTiltCard>
           </BlitzReveal>
         ))}
       </div>
@@ -389,12 +446,14 @@ function FeaturesSection() {
   );
 }
 
+/* ─── PLAYGROUND ─────────────────────────────────────────────────────── */
+
 function PlaygroundSection() {
   return (
-    <section id="playground" className="border-y border-border bg-card/20 py-12 sm:py-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+    <section id="playground" className="relative border-y border-border/60 bg-card/20 py-12 backdrop-blur-sm sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <BlitzReveal className="mb-8 max-w-3xl sm:mb-10">
-          <Badge variant="outline" className="mb-3 border-[var(--blitz)]/40 text-[var(--blitz)] sm:mb-4">
+          <Badge variant="outline" className="mb-3 border-[var(--blitz)]/40 bg-[var(--blitz)]/5 text-[var(--blitz)] sm:mb-4">
             <Terminal className="mr-1.5 h-3 w-3" />
             Live playground
           </Badge>
@@ -407,8 +466,8 @@ function PlaygroundSection() {
           </p>
         </BlitzReveal>
 
-        <BlitzReveal>
-          <Card className="border-border bg-background/40">
+        <BlitzReveal y={32}>
+          <Card className="blitz-glass border-border/60">
             <CardContent className="p-3 sm:p-6">
               <LivePlayground apiBaseUrl="" />
             </CardContent>
@@ -418,6 +477,8 @@ function PlaygroundSection() {
     </section>
   );
 }
+
+/* ─── ENDPOINTS TABLE ────────────────────────────────────────────────── */
 
 function EndpointsSection() {
   const endpoints = [
@@ -438,9 +499,9 @@ function EndpointsSection() {
   ];
 
   return (
-    <section id="endpoints" className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-20">
+    <section id="endpoints" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20">
       <BlitzReveal className="mb-8 max-w-3xl sm:mb-10">
-        <Badge variant="outline" className="mb-3 border-[var(--blitz)]/40 text-[var(--blitz)] sm:mb-4">
+        <Badge variant="outline" className="mb-3 border-[var(--blitz)]/40 bg-[var(--blitz)]/5 text-[var(--blitz)] sm:mb-4">
           <Layers className="mr-1.5 h-3 w-3" />
           14 endpoints
         </Badge>
@@ -449,9 +510,10 @@ function EndpointsSection() {
         </h2>
       </BlitzReveal>
 
-      <BlitzReveal>
-        <div className="overflow-hidden rounded-lg border border-border">
-          <div className="overflow-x-auto">
+      <BlitzReveal y={32}>
+        {/* Mobile: card list. Desktop: table. */}
+        <div className="hidden overflow-hidden rounded-xl border border-border/60 backdrop-blur-sm md:block">
+          <div className="overflow-x-auto blitz-scroll-x">
             <table className="w-full min-w-[640px] text-sm">
               <thead className="bg-card/60 text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
@@ -460,16 +522,24 @@ function EndpointsSection() {
                   <th className="px-3 py-3 text-left sm:px-4">What it returns</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-border/60">
                 {endpoints.map((ep) => (
-                  <tr key={ep.path} className="hover:bg-card/40">
+                  <tr
+                    key={ep.path}
+                    className="transition-colors hover:bg-card/40"
+                  >
                     <td className="whitespace-nowrap px-3 py-3 sm:px-4">
-                      <Badge variant="outline" className="border-[var(--blitz)]/40 text-[var(--blitz)]">
+                      <Badge
+                        variant="outline"
+                        className="border-[var(--blitz)]/40 bg-[var(--blitz)]/5 text-[var(--blitz)]"
+                      >
                         {ep.method}
                       </Badge>
                     </td>
                     <td className="px-3 py-3 sm:px-4">
-                      <code className="blitz-code text-foreground">{ep.path}</code>
+                      <code className="blitz-code text-foreground blitz-break-anywhere">
+                        {ep.path}
+                      </code>
                     </td>
                     <td className="px-3 py-3 text-muted-foreground sm:px-4">{ep.desc}</td>
                   </tr>
@@ -478,10 +548,35 @@ function EndpointsSection() {
             </table>
           </div>
         </div>
+
+        {/* Mobile card layout */}
+        <div className="grid gap-2 md:hidden">
+          {endpoints.map((ep) => (
+            <div
+              key={ep.path}
+              className="blitz-glass rounded-lg p-3"
+            >
+              <div className="mb-1.5 flex items-center gap-2">
+                <Badge
+                  variant="outline"
+                  className="border-[var(--blitz)]/40 bg-[var(--blitz)]/5 text-[var(--blitz)]"
+                >
+                  {ep.method}
+                </Badge>
+                <code className="blitz-code text-xs text-foreground blitz-break-anywhere">
+                  {ep.path}
+                </code>
+              </div>
+              <p className="text-xs text-muted-foreground">{ep.desc}</p>
+            </div>
+          ))}
+        </div>
       </BlitzReveal>
     </section>
   );
 }
+
+/* ─── DEPLOY ─────────────────────────────────────────────────────────── */
 
 function DeploySection() {
   const platforms = [
@@ -496,10 +591,10 @@ function DeploySection() {
   ];
 
   return (
-    <section id="deploy" className="border-y border-border bg-card/20 py-12 sm:py-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+    <section id="deploy" className="relative border-y border-border/60 bg-card/20 py-12 backdrop-blur-sm sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <BlitzReveal className="mb-8 max-w-3xl sm:mb-10">
-          <Badge variant="outline" className="mb-3 border-[var(--blitz)]/40 text-[var(--blitz)] sm:mb-4">
+          <Badge variant="outline" className="mb-3 border-[var(--blitz)]/40 bg-[var(--blitz)]/5 text-[var(--blitz)] sm:mb-4">
             <Cloud className="mr-1.5 h-3 w-3" />
             Deploy anywhere
           </Badge>
@@ -515,18 +610,24 @@ function DeploySection() {
         <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-4">
           {platforms.map((p, i) => (
             <BlitzReveal key={p.name} delay={i * 0.04}>
-              <Card className="blitz-card-hover h-full border-border bg-card/60">
-                <CardContent className="p-4 sm:p-5">
-                  <div className="mb-3 flex items-center gap-2">
-                    <span className="text-xl text-[var(--blitz)] sm:text-2xl">{p.icon}</span>
-                    <span className="font-semibold text-foreground sm:text-base">{p.name}</span>
-                  </div>
-                  <div className="mb-3 overflow-x-auto rounded-md border border-border bg-background/60 px-2 py-1.5 sm:px-3 sm:py-2">
-                    <code className="blitz-code text-[10px] text-[var(--blitz)] sm:text-xs">$ {p.cmd}</code>
-                  </div>
-                  <p className="text-[11px] text-muted-foreground sm:text-xs">{p.desc}</p>
-                </CardContent>
-              </Card>
+              <BlitzTiltCard max={5} className="h-full">
+                <Card className="blitz-card-hover h-full border-border/60 bg-card/40 backdrop-blur-sm">
+                  <CardContent className="p-4 sm:p-5">
+                    <div className="mb-3 flex items-center gap-2">
+                      <span className="text-xl text-[var(--blitz)] sm:text-2xl">{p.icon}</span>
+                      <span className="font-semibold text-foreground sm:text-base">{p.name}</span>
+                    </div>
+                    <div className="mb-3 overflow-x-auto rounded-md border border-border/60 bg-background/60 px-2 py-1.5 sm:px-3 sm:py-2 blitz-scroll-x">
+                      <code className="blitz-code text-[10px] text-[var(--blitz)] sm:text-xs whitespace-nowrap">
+                        $ {p.cmd}
+                      </code>
+                    </div>
+                    <p className="text-[11px] leading-relaxed text-muted-foreground sm:text-xs">
+                      {p.desc}
+                    </p>
+                  </CardContent>
+                </Card>
+              </BlitzTiltCard>
             </BlitzReveal>
           ))}
         </div>
@@ -535,11 +636,13 @@ function DeploySection() {
   );
 }
 
+/* ─── CODE SAMPLES ───────────────────────────────────────────────────── */
+
 function CodeSamplesSection() {
   return (
-    <section id="usage" className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-20">
+    <section id="usage" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20">
       <BlitzReveal className="mb-8 max-w-3xl sm:mb-10">
-        <Badge variant="outline" className="mb-3 border-[var(--blitz)]/40 text-[var(--blitz)] sm:mb-4">
+        <Badge variant="outline" className="mb-3 border-[var(--blitz)]/40 bg-[var(--blitz)]/5 text-[var(--blitz)] sm:mb-4">
           <Code2 className="mr-1.5 h-3 w-3" />
           Usage
         </Badge>
@@ -552,21 +655,29 @@ function CodeSamplesSection() {
         </p>
       </BlitzReveal>
 
-      <BlitzReveal>
+      <BlitzReveal y={32}>
         <CodeBlock />
       </BlitzReveal>
     </section>
   );
 }
 
+/* ─── AUTHOR ─────────────────────────────────────────────────────────── */
+
 function AuthorSection() {
   return (
-    <section className="border-t border-border bg-card/20 py-12 sm:py-20">
+    <section className="relative border-t border-border/60 bg-card/20 py-12 backdrop-blur-sm sm:py-20">
       <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
         <BlitzReveal>
-          <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full border border-[var(--blitz)]/40 bg-[var(--blitz)]/10 sm:mb-6 sm:h-16 sm:w-16">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--blitz)]/40 bg-[var(--blitz)]/10 backdrop-blur-sm sm:mb-6 sm:h-16 sm:w-16"
+          >
             <BlitzBolt className="h-6 w-6 text-[var(--blitz)] sm:h-8 sm:w-8" />
-          </div>
+          </motion.div>
           <h2 className="font-mono text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
             Built by Blitz.
           </h2>
@@ -580,20 +691,22 @@ function AuthorSection() {
           </p>
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:mt-8 sm:gap-3">
-            <a href="https://flutterwave.com/donate/knjcdfjgzwyt" target="_blank" rel="noreferrer">
-              <Button className="bg-[var(--blitz)] text-[var(--blitz-foreground)] hover:bg-[var(--blitz)]/90">
-                <Heart className="mr-2 h-4 w-4" />
-                Donate
-              </Button>
-            </a>
+            <BlitzMagnetic strength={0.2}>
+              <a href="https://flutterwave.com/donate/knjcdfjgzwyt" target="_blank" rel="noreferrer">
+                <Button className="bg-[var(--blitz)] text-[var(--blitz-foreground)] hover:bg-[var(--blitz)]/90 shadow-[0_0_24px_-6px_var(--blitz-glow)]">
+                  <Heart className="mr-2 h-4 w-4" />
+                  Donate
+                </Button>
+              </a>
+            </BlitzMagnetic>
             <a href="https://x.com/blitzlabx" target="_blank" rel="noreferrer">
-              <Button variant="outline" className="border-border hover:border-[var(--blitz)]">
+              <Button variant="outline" className="border-border hover:border-[var(--blitz)] hover:bg-card/50">
                 <Twitter className="mr-2 h-4 w-4" />
                 @blitzlabx
               </Button>
             </a>
             <a href="https://github.com/blitzlabx/blitzyxsc-plus" target="_blank" rel="noreferrer">
-              <Button variant="outline" className="border-border hover:border-[var(--blitz)]">
+              <Button variant="outline" className="border-border hover:border-[var(--blitz)] hover:bg-card/50">
                 <Github className="mr-2 h-4 w-4" />
                 GitHub
               </Button>
@@ -605,25 +718,27 @@ function AuthorSection() {
   );
 }
 
+/* ─── FOOTER ────────────────────────────────────────────────────────── */
+
 function FooterSection() {
   return (
-    <footer className="border-t border-border bg-background py-8 sm:py-12">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+    <footer className="border-t border-border/60 bg-background py-8 sm:py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:gap-6">
           <div className="flex items-center gap-2 text-xs text-muted-foreground sm:text-sm">
             <BlitzBolt className="h-5 w-5 text-[var(--blitz)]" />
-            <span className="blitz-code">blitzyxsc-plus v1.0.0</span>
+            <span className="blitz-code">blitzyxsc-plus v1.1.0</span>
             <span className="text-muted-foreground/60">·</span>
             <span>MIT</span>
           </div>
-          <div className="flex items-center gap-3 text-xs text-muted-foreground sm:gap-4 sm:text-sm">
-            <a href="https://github.com/blitzlabx/blitzyxsc-plus" className="hover:text-[var(--blitz)]">
+          <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground sm:gap-4 sm:text-sm">
+            <a href="https://github.com/blitzlabx/blitzyxsc-plus" className="transition-colors hover:text-[var(--blitz)]">
               GitHub
             </a>
-            <a href="https://x.com/blitzlabx" className="hover:text-[var(--blitz)]">
+            <a href="https://x.com/blitzlabx" className="transition-colors hover:text-[var(--blitz)]">
               @blitzlabx
             </a>
-            <a href="https://flutterwave.com/donate/knjcdfjgzwyt" className="hover:text-[var(--blitz)]">
+            <a href="https://flutterwave.com/donate/knjcdfjgzwyt" className="transition-colors hover:text-[var(--blitz)]">
               Donate
             </a>
           </div>

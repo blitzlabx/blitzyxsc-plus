@@ -20,8 +20,8 @@ export {
     Blitzyxsc,
     BlitzyxscClient,
     type BlitzyxscOptions,
-    type ProviderName,
 } from './client';
+export type { ProviderName } from './constants';
 
 export const VERSION = '1.0.0';
 export const AUTHOR = 'Blitz (blitzlabx)';
@@ -29,6 +29,8 @@ export const LICENSE = 'MIT';
 export const PACKAGE_NAME = 'blitzyxsc';
 
 // Convenience default client (singleton)
+import { Blitzyxsc } from './client';
+
 let _defaultClient: Blitzyxsc | null = null;
 
 export function getDefaultClient(): Blitzyxsc {

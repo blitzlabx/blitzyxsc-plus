@@ -12,10 +12,8 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import { cache } from 'hono/cache';
 import { poweredBy } from 'hono/powered-by';
 import { secureHeaders } from 'hono/secure-headers';
-import { jwt } from 'hono/jwt';
 
 import { profileRoutes } from './routes/profile';
 import { statusRoutes } from './routes/status';
@@ -35,11 +33,18 @@ import { rootRoutes } from './routes/root';
 
 import { blitzRateLimit } from './lib/blitz-rate-limit';
 import { blitzErrorMiddleware } from './lib/blitz-errors';
-import { blitzCache } from './lib/blitz-cache';
+
+// KVNamespace is a Cloudflare Workers global. Declare a minimal fallback
+// type so the file typechecks on Node/Bun/Deno runtimes that don't ship it.
+type KVNamespaceLike = {
+  get(key: string, opts?: any): Promise<string | null>;
+  put(key: string, value: string, opts?: any): Promise<void>;
+  delete(key: string): Promise<void>;
+};
 
 export type Bindings = {
   // Cloudflare KV / Workers KV (optional)
-  CACHE?: KVNamespace;
+  CACHE?: KVNamespaceLike;
   // Optional JWT secret for authenticated tier (not required for no-auth usage)
   JWT_SECRET?: string;
   // Per-IP rate limit (requests per minute). Default 60.
@@ -106,7 +111,7 @@ export function createApp(): Hono<{ Bindings: Bindings; Variables: Vars }> {
         hint: 'See GET / for the full route listing.',
         requestId: c.get('requestId'),
       },
-      404,
+      404 as any,
     ),
   );
 

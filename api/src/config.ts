@@ -110,7 +110,7 @@ export const BLITZ_ENDPOINTS: Array<{
     summary: "Fetch a user's followers list.",
     cacheTtlSec: BLITZ_DEFAULTS.cacheTtlFollowersSec,
     params: [
-      { name: 'handle', type: 'string', required: true },
+      { name: 'handle', type: 'string', required: true, description: 'Twitter screen name' },
       { name: 'limit', type: 'integer', required: false, description: 'Default 20' },
     ],
   },
@@ -120,7 +120,7 @@ export const BLITZ_ENDPOINTS: Array<{
     summary: "Fetch a user's following list.",
     cacheTtlSec: BLITZ_DEFAULTS.cacheTtlFollowersSec,
     params: [
-      { name: 'handle', type: 'string', required: true },
+      { name: 'handle', type: 'string', required: true, description: 'Twitter screen name' },
       { name: 'limit', type: 'integer', required: false, description: 'Default 20' },
     ],
   },
@@ -130,7 +130,7 @@ export const BLITZ_ENDPOINTS: Array<{
     summary: "Fetch a user's recent replies (each is a mention of its parent's author).",
     cacheTtlSec: BLITZ_DEFAULTS.cacheTtlTimelineSec,
     params: [
-      { name: 'handle', type: 'string', required: true },
+      { name: 'handle', type: 'string', required: true, description: 'Twitter screen name' },
       { name: 'limit', type: 'integer', required: false, description: 'Default 20' },
     ],
   },
@@ -139,14 +139,14 @@ export const BLITZ_ENDPOINTS: Array<{
     path: '/api/about/:handle',
     summary: 'Fetch extended profile metadata (location, country, link, etc.).',
     cacheTtlSec: BLITZ_DEFAULTS.cacheTtlProfileSec,
-    params: [{ name: 'handle', type: 'string', required: true }],
+    params: [{ name: 'handle', type: 'string', required: true, description: 'Twitter screen name' }],
   },
   {
     method: 'GET',
     path: '/api/reposts/:id',
     summary: 'Fetch the list of users who reposted a tweet.',
     cacheTtlSec: BLITZ_DEFAULTS.cacheTtlStatusSec,
-    params: [{ name: 'id', type: 'string', required: true }],
+    params: [{ name: 'id', type: 'string', required: true, description: 'Numeric tweet ID' }],
   },
   {
     method: 'GET',

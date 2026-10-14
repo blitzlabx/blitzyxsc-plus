@@ -8,7 +8,8 @@
 
 import { app } from '../app';
 
-const port = parseInt(Deno.env.get('PORT') || '8787', 10);
-const hostname = Deno.env.get('HOST') || '0.0.0.0';
+const DenoNS = (globalThis as any).Deno || ({} as any);
+const port = parseInt(DenoNS.env?.get?.('PORT') || '8787', 10);
+const hostname = DenoNS.env?.get?.('HOST') || '0.0.0.0';
 
-Deno.serve({ port, hostname }, app.fetch);
+DenoNS.serve?.({ port, hostname }, app.fetch);

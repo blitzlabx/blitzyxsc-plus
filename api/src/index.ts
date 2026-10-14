@@ -37,9 +37,10 @@ if (runtime === 'bun') {
   });
 } else if (runtime === 'deno') {
   // Deno native
-  const port = parseInt((Deno as any).env.get('PORT') || '8787', 10);
+  const denoEnv = (globalThis as any).Deno;
+  const port = parseInt(denoEnv.env.get('PORT') || '8787', 10);
   console.log(blitzBanner(port));
-  Deno.serve({ port, hostname: '0.0.0.0' }, app.fetch);
+  denoEnv.serve({ port, hostname: '0.0.0.0' }, app.fetch);
 } else {
   // Fallback: assume Node + tsx — try @hono/node-server
   import('@hono/node-server').then(({ serve }) => {

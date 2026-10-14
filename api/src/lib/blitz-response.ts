@@ -5,6 +5,7 @@
  */
 
 import type { Context } from 'hono';
+import type { ContentfulStatusCode } from 'hono/utils/http-status';
 
 interface BlitzEnvelope<T> {
   ok: true;
@@ -49,7 +50,7 @@ export function blitzErr(c: Context, error: string, message: string, status: num
     requestId: c.get('requestId'),
     durationMs: Date.now() - c.get('startTime'),
   };
-  return c.json(env, status);
+  return c.json(env, status as ContentfulStatusCode);
 }
 
 /**
