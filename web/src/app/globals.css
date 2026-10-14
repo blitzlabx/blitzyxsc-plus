@@ -50,32 +50,31 @@
   --font-jetbrains: var(--font-jetbrains-mono);
 }
 
-/* Dark premium theme — Blitz Plus edition (evolved).
-   Color: amber/electric yellow on near-black with refined glass surfaces.
-   No indigo. No purple. Terminal-inspired but more premium. */
+/* Dark premium theme — Blitz Plus v2.
+   Refined near-black with subtle warmth, glass surfaces, neon accents. */
 :root {
   --radius: 0.875rem;
 
   /* Base: deep near-black with subtle warmth */
-  --background: oklch(0.11 0.006 75);
+  --background: oklch(0.10 0.006 75);
   --foreground: oklch(0.98 0.005 75);
 
   /* Cards: glassy hair-lighter than bg */
-  --card: oklch(0.15 0.008 75);
+  --card: oklch(0.14 0.008 75);
   --card-foreground: oklch(0.98 0.005 75);
 
-  --popover: oklch(0.15 0.008 75);
+  --popover: oklch(0.14 0.008 75);
   --popover-foreground: oklch(0.98 0.005 75);
 
   /* Primary: vivid amber */
   --primary: oklch(0.80 0.18 75);
-  --primary-foreground: oklch(0.11 0.006 75);
+  --primary-foreground: oklch(0.10 0.006 75);
 
   /* Secondary: warm muted */
-  --secondary: oklch(0.21 0.012 75);
+  --secondary: oklch(0.20 0.012 75);
   --secondary-foreground: oklch(0.98 0.005 75);
 
-  --muted: oklch(0.21 0.012 75);
+  --muted: oklch(0.20 0.012 75);
   --muted-foreground: oklch(0.65 0.012 75);
 
   --accent: oklch(0.30 0.05 75);
@@ -83,13 +82,13 @@
 
   --destructive: oklch(0.62 0.22 27);
 
-  --border: oklch(0.25 0.012 75);
-  --input: oklch(0.21 0.012 75);
+  --border: oklch(0.24 0.012 75);
+  --input: oklch(0.20 0.012 75);
   --ring: oklch(0.80 0.18 75);
 
   /* Blitz brand colors */
   --blitz: oklch(0.85 0.20 75);
-  --blitz-foreground: oklch(0.11 0.006 75);
+  --blitz-foreground: oklch(0.10 0.006 75);
   --blitz-dim: oklch(0.55 0.10 75);
   --blitz-glow: oklch(0.78 0.20 75 / 0.4);
   --blitz-soft: oklch(0.78 0.20 75 / 0.12);
@@ -100,14 +99,22 @@
   --chart-4: oklch(0.70 0.12 40);
   --chart-5: oklch(0.80 0.05 75);
 
-  --sidebar: oklch(0.15 0.008 75);
+  --sidebar: oklch(0.14 0.008 75);
   --sidebar-foreground: oklch(0.98 0.005 75);
   --sidebar-primary: oklch(0.80 0.18 75);
-  --sidebar-primary-foreground: oklch(0.11 0.006 75);
-  --sidebar-accent: oklch(0.21 0.012 75);
+  --sidebar-primary-foreground: oklch(0.10 0.006 75);
+  --sidebar-accent: oklch(0.20 0.012 75);
   --sidebar-accent-foreground: oklch(0.98 0.005 75);
-  --sidebar-border: oklch(0.25 0.012 75);
+  --sidebar-border: oklch(0.24 0.012 75);
   --sidebar-ring: oklch(0.80 0.18 75);
+
+  /* JSON syntax colors */
+  --json-key: oklch(0.78 0.18 75);        /* amber */
+  --json-string: oklch(0.78 0.18 145);    /* green */
+  --json-number: oklch(0.78 0.16 60);     /* orange */
+  --json-bool: oklch(0.72 0.20 280);      /* purple */
+  --json-null: oklch(0.65 0.04 75);       /* grey */
+  --json-punct: oklch(0.55 0.01 75);     /* dim */
 }
 
 * {
@@ -130,9 +137,7 @@ body {
     radial-gradient(ellipse 40% 30% at bottom left, oklch(0.78 0.20 75 / 0.03), transparent 60%),
     var(--background);
   background-attachment: fixed;
-  /* Prevent horizontal scroll on mobile */
   overflow-x: hidden;
-  /* Better font rendering on mobile */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -150,15 +155,15 @@ body {
 
 /* Custom scrollbar — slim, amber accent on hover */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: oklch(0.30 0.012 75);
-  border-radius: 5px;
+  border-radius: 4px;
   border: 2px solid transparent;
   background-clip: content-box;
 }
@@ -173,17 +178,11 @@ body {
   color: var(--blitz-foreground);
 }
 
-/* ---- Premium animations ---- */
+/* ─── Premium animations ──────────────────────────────────────────────── */
 
 @keyframes blitz-pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 0 0 var(--blitz-glow);
-    opacity: 1;
-  }
-  50% {
-    box-shadow: 0 0 0 14px transparent;
-    opacity: 0.85;
-  }
+  0%, 100% { box-shadow: 0 0 0 0 var(--blitz-glow); opacity: 1; }
+  50% { box-shadow: 0 0 0 14px transparent; opacity: 0.85; }
 }
 
 @keyframes blitz-pulse-ring {
@@ -248,65 +247,143 @@ body {
   66% { transform: translate(-30px, 30px) rotate(240deg); }
 }
 
-@keyframes blitz-orbit {
-  0% { transform: rotate(0deg) translateX(80px) rotate(0deg); }
-  100% { transform: rotate(360deg) translateX(80px) rotate(-360deg); }
-}
-
 @keyframes blitz-rise {
-  0% {
-    opacity: 0;
-    transform: translateY(40px) scale(0.95);
-    filter: blur(8px);
+  0% { opacity: 0; transform: translateY(40px) scale(0.95); filter: blur(8px); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+/* ─── Rainbow neon border ──────────────────────────────────────────────── */
+
+@keyframes rainbow-hue-rotate {
+  0%   { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes rainbow-spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes rainbow-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+/* Animated rainbow neon border — wraps any element with a glowing conic gradient */
+.blitz-rainbow-border {
+  position: relative;
+  isolation: isolate;
+}
+.blitz-rainbow-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    #ff0080,
+    #ff8c00,
+    #ffd700,
+    #00ff88,
+    #00d4ff,
+    #8b00ff,
+    #ff0080
+  );
+  background-size: 200% 200%;
+  animation: rainbow-flow 6s ease-in-out infinite;
+  z-index: -1;
+  filter: blur(2px);
+  opacity: 0.85;
+}
+.blitz-rainbow-border::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--card);
+  z-index: -1;
+}
+
+/* Static rainbow border (no animation — for low-power devices) */
+.blitz-rainbow-border-static {
+  position: relative;
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(var(--card), var(--card)) padding-box,
+    conic-gradient(
+      from 0deg,
+      #ff0080,
+      #ff8c00,
+      #ffd700,
+      #00ff88,
+      #00d4ff,
+      #8b00ff,
+      #ff0080
+    ) border-box;
+}
+
+/* Neon glow pulse — soft outer glow that breathes */
+@keyframes neon-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 8px rgba(255, 0, 128, 0.3),
+      0 0 16px rgba(0, 212, 255, 0.2),
+      0 0 24px rgba(0, 255, 136, 0.15);
   }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
+  33% {
+    box-shadow:
+      0 0 12px rgba(255, 140, 0, 0.4),
+      0 0 20px rgba(139, 0, 255, 0.25),
+      0 0 32px rgba(255, 215, 0, 0.2);
+  }
+  66% {
+    box-shadow:
+      0 0 10px rgba(0, 255, 136, 0.35),
+      0 0 18px rgba(0, 212, 255, 0.25),
+      0 0 28px rgba(255, 0, 128, 0.2);
   }
 }
-
-.animate-blitz-pulse-glow {
-  animation: blitz-pulse-glow 2s ease-in-out infinite;
+.blitz-neon-pulse {
+  animation: neon-pulse 4s ease-in-out infinite;
 }
 
-.animate-blitz-blink {
-  animation: blitz-blink 1s steps(2) infinite;
+/* Animated rainbow gradient text */
+@keyframes rainbow-text-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+.blitz-rainbow-text {
+  background: linear-gradient(
+    90deg,
+    #ff0080,
+    #ff8c00,
+    #ffd700,
+    #00ff88,
+    #00d4ff,
+    #8b00ff,
+    #ff0080
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: rainbow-text-flow 4s linear infinite;
 }
 
-.animate-blitz-glitch {
-  animation: blitz-glitch 0.3s ease-in-out infinite;
-}
-
-.animate-blitz-marquee {
-  animation: blitz-marquee 30s linear infinite;
-}
-
-.animate-blitz-fade-up {
-  animation: blitz-fade-up 0.6s ease-out both;
-}
-
-.animate-blitz-fade-in {
-  animation: blitz-fade-in 0.8s ease-out both;
-}
-
-.animate-blitz-float {
-  animation: blitz-float 4s ease-in-out infinite;
-}
-
-.animate-blitz-aurora {
-  animation: blitz-aurora 18s ease-in-out infinite;
-}
-
-.animate-blitz-rise {
-  animation: blitz-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
+.animate-blitz-pulse-glow { animation: blitz-pulse-glow 2s ease-in-out infinite; }
+.animate-blitz-blink { animation: blitz-blink 1s steps(2) infinite; }
+.animate-blitz-glitch { animation: blitz-glitch 0.3s ease-in-out infinite; }
+.animate-blitz-marquee { animation: blitz-marquee 30s linear infinite; }
+.animate-blitz-fade-up { animation: blitz-fade-up 0.6s ease-out both; }
+.animate-blitz-fade-in { animation: blitz-fade-in 0.8s ease-out both; }
+.animate-blitz-float { animation: blitz-float 4s ease-in-out infinite; }
+.animate-blitz-aurora { animation: blitz-aurora 18s ease-in-out infinite; }
+.animate-blitz-rise { animation: blitz-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
 /* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -343,7 +420,6 @@ body {
 .blitz-text-glow {
   text-shadow: 0 0 20px var(--blitz-glow), 0 0 40px var(--blitz-glow);
 }
-
 .blitz-text-glow-soft {
   text-shadow: 0 0 12px var(--blitz-glow);
 }
@@ -359,58 +435,25 @@ body {
 .blitz-card-hover:hover {
   transform: translateY(-4px);
   border-color: var(--blitz);
-  box-shadow:
-    0 12px 32px -8px var(--blitz-glow),
-    0 0 0 1px var(--blitz-glow);
+  box-shadow: 0 12px 32px -8px var(--blitz-glow), 0 0 0 1px var(--blitz-glow);
 }
 
-/* Premium gradient border */
-.blitz-border-gradient {
-  position: relative;
-}
-.blitz-border-gradient::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, var(--blitz), transparent 40%, transparent 60%, var(--blitz-dim));
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* Code block style */
-.blitz-code {
-  font-family: var(--font-jetbrains-mono), var(--font-geist-mono), ui-monospace, monospace;
-  font-feature-settings: 'liga' 0;
-}
-
-/* Glass panel — frosted, more premium than flat card */
+/* Glass panel — frosted, premium */
 .blitz-glass {
-  background: linear-gradient(
-    180deg,
-    oklch(0.17 0.008 75 / 0.7),
-    oklch(0.14 0.008 75 / 0.6)
-  );
+  background: linear-gradient(180deg, oklch(0.16 0.008 75 / 0.7), oklch(0.13 0.008 75 / 0.6));
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   border: 1px solid oklch(0.30 0.012 75 / 0.6);
 }
 
 .blitz-glass-strong {
-  background: linear-gradient(
-    180deg,
-    oklch(0.18 0.010 75 / 0.85),
-    oklch(0.15 0.010 75 / 0.75)
-  );
+  background: linear-gradient(180deg, oklch(0.18 0.010 75 / 0.85), oklch(0.14 0.010 75 / 0.75));
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
   border: 1px solid oklch(0.32 0.012 75 / 0.7);
 }
 
-/* Aurora blob — soft moving gradient orb for backgrounds */
+/* Aurora blob */
 .blitz-aurora-blob {
   position: absolute;
   border-radius: 50%;
@@ -419,31 +462,11 @@ body {
   pointer-events: none;
 }
 
-/* Shimmer (for loading / premium accents) */
+/* Shimmer (loading) */
 .blitz-shimmer {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--blitz-soft) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, var(--blitz-soft) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: blitz-shimmer 2.5s linear infinite;
-}
-
-/* Pill / chip */
-.blitz-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  border: 1px solid oklch(0.32 0.05 75 / 0.5);
-  background: oklch(0.78 0.20 75 / 0.08);
-  color: var(--blitz);
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
 }
 
 /* Mobile-safe horizontal scroller — no visible scrollbar, snap-friendly */
@@ -454,11 +477,9 @@ body {
   -ms-overflow-style: none;
   scroll-snap-type: x mandatory;
 }
-.blitz-scroll-x::-webkit-scrollbar {
-  display: none;
-}
+.blitz-scroll-x::-webkit-scrollbar { display: none; }
 
-/* Word-break helper for long URLs/IDs */
+/* Word-break helper for long URLs/IDs/JSON */
 .blitz-break-anywhere {
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -473,17 +494,132 @@ body {
 
 /* Tap target — 44px minimum on touch */
 @media (pointer: coarse) {
-  button,
-  a[role="button"],
-  .blitz-tappable {
+  button, a[role="button"], .blitz-tappable {
     min-height: 44px;
     min-width: 44px;
   }
 }
 
-/* Container queries (modern browsers) — for premium responsive design */
+/* Container queries */
 @supports (container-type: inline-size) {
-  .blitz-container {
-    container-type: inline-size;
+  .blitz-container { container-type: inline-size; }
+}
+
+/* ─── Splash screen ───────────────────────────────────────────────────── */
+
+.blitz-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--background);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.blitz-splash-progress {
+  width: min(280px, 70vw);
+  height: 2px;
+  background: oklch(0.22 0.012 75);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+.blitz-splash-progress::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--blitz), transparent);
+  background-size: 200% 100%;
+  animation: blitz-shimmer 1.4s linear infinite;
+}
+
+/* ─── JSON syntax highlighting ────────────────────────────────────────── */
+
+.blitz-json {
+  font-family: var(--font-jetbrains-mono), var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  tab-size: 2;
+}
+@media (min-width: 640px) {
+  .blitz-json { font-size: 13px; }
+}
+
+.blitz-json-key     { color: var(--json-key); }
+.blitz-json-string  { color: var(--json-string); }
+.blitz-json-number  { color: var(--json-number); }
+.blitz-json-bool    { color: var(--json-bool); font-weight: 500; }
+.blitz-json-null    { color: var(--json-null); font-style: italic; }
+.blitz-json-punct   { color: var(--json-punct); }
+
+/* ─── Virtualization-safe output area ─────────────────────────────────── */
+
+.blitz-output-viewport {
+  position: relative;
+  max-height: 60vh;
+  min-height: 280px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* content-visibility lets the browser skip rendering offscreen content */
+.blitz-cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 400px;
+}
+
+/* ─── Terminal output (premium) ───────────────────────────────────────── */
+
+.blitz-terminal {
+  background:
+    linear-gradient(180deg, oklch(0.10 0.008 75 / 0.95), oklch(0.08 0.005 75 / 0.95));
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+}
+
+.blitz-terminal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  background: oklch(0.13 0.008 75 / 0.7);
+}
+
+.blitz-terminal-dots {
+  display: inline-flex;
+  gap: 0.4rem;
+}
+.blitz-terminal-dots > span {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  display: inline-block;
+}
+
+/* Smooth scroll on the whole document on iOS */
+@supports (-webkit-touch-callout: none) {
+  html { -webkit-overflow-scrolling: touch; }
+  body { overscroll-behavior-y: none; }
+}
+
+/* Prevent iOS zoom on input focus */
+@media (max-width: 640px) {
+  input[type="text"],
+  input[type="search"],
+  textarea,
+  select {
+    font-size: 16px !important;
   }
 }

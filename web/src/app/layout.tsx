@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
+import { BlitzSplash } from '@/components/blitz/splash-screen';
+import { BlitzVersionPopup } from '@/components/blitz/version-popup';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -24,13 +26,14 @@ const BASE_URL = 'https://blitzyxsc-plus.pages.dev';
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'blitzyxsc-plus — no-auth X/Twitter data API',
+    default: 'blitzyxsc-plus v2 — no-auth X/Twitter data API',
     template: '%s · blitzyxsc-plus',
   },
   description:
-    'Fetch tweets, profiles, replies, trends, and followers — no API key, no OAuth, no developer console. By Blitz (blitzlabx).',
+    'Fetch tweets, profiles, replies, trends, and followers — no API key, no OAuth, no developer console. v2 ships a premium terminal playground, 14 endpoints, colored JSON, and zero-lag rendering. By Blitz (blitzlabx).',
   keywords: [
     'blitzyxsc',
+    'blitzyxsc-plus',
     'twitter api',
     'x api',
     'no-auth',
@@ -52,7 +55,7 @@ export const metadata: Metadata = {
     canonical: BASE_URL,
   },
   openGraph: {
-    title: 'blitzyxsc-plus — no-auth X/Twitter data API',
+    title: 'blitzyxsc-plus v2 — no-auth X/Twitter data API',
     description:
       'Fetch tweets, profiles, replies, trends, and followers — no API key, no OAuth, no developer console. By Blitz (blitzlabx).',
     url: BASE_URL,
@@ -62,7 +65,7 @@ export const metadata: Metadata = {
         url: '/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'blitzyxsc-plus — no-auth X/Twitter data API by Blitz (blitzlabx)',
+        alt: 'blitzyxsc-plus v2 — no-auth X/Twitter data API by Blitz (blitzlabx)',
       },
     ],
     locale: 'en_US',
@@ -70,7 +73,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'blitzyxsc-plus',
+    title: 'blitzyxsc-plus v2',
     description: 'No-auth X/Twitter data API by Blitz (blitzlabx).',
     creator: '@blitzlabx',
     site: '@blitzlabx',
@@ -148,6 +151,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${jetbrainsMono.variable} antialiased bg-background text-foreground min-h-screen`}
       >
+        <BlitzSplash />
+        <BlitzVersionPopup />
         {children}
         <Toaster />
       </body>

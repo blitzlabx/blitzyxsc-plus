@@ -1,98 +1,199 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Play, Copy, Check, Terminal, Zap } from 'lucide-react';
+import { Loader2, Play, Terminal, Zap, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
+import { BlitzJsonViewer } from './json-viewer';
 
 type EndpointDef = {
   id: string;
   method: 'GET';
   path: string;
   label: string;
+  shortLabel: string;
   defaultPathParam: string;
   extraParams?: Array<{ name: string; default: string; label: string }>;
   description: string;
-  icon?: React.ReactNode;
+  group: 'user' | 'tweet' | 'trends' | 'health';
 };
 
-const ENDPOINTS: EndpointDef[] = [
+const ALL_ENDPOINTS: EndpointDef[] = [
+  // User endpoints
   {
     id: 'profile',
     method: 'GET',
     path: '/api/profile/{handle}',
     label: 'Profile',
+    shortLabel: 'profile',
     defaultPathParam: 'elonmusk',
     description: 'Fetch a user profile by screen name.',
-  },
-  {
-    id: 'status',
-    method: 'GET',
-    path: '/api/status/{id}',
-    label: 'Status',
-    defaultPathParam: '2110438877274259488',
-    description: 'Fetch a single tweet by ID.',
-  },
-  {
-    id: 'timeline',
-    method: 'GET',
-    path: '/api/timeline/{handle}',
-    label: 'Timeline',
-    defaultPathParam: 'NASA',
-    extraParams: [{ name: 'limit', default: '5', label: 'Limit' }],
-    description: "Fetch a user's recent tweets.",
-  },
-  {
-    id: 'replies',
-    method: 'GET',
-    path: '/api/replies/{id}',
-    label: 'Replies',
-    defaultPathParam: '2110438877274259488',
-    description: 'Fetch the full conversation (root + thread + replies).',
-  },
-  {
-    id: 'trends',
-    method: 'GET',
-    path: '/api/trends',
-    label: 'Trends',
-    defaultPathParam: '',
-    description: 'Fetch current trending topics.',
-  },
-  {
-    id: 'search',
-    method: 'GET',
-    path: '/api/search/users',
-    label: 'Search',
-    defaultPathParam: '',
-    extraParams: [{ name: 'q', default: 'blitzlabx', label: 'Query' }],
-    description: 'Search for users via typeahead.',
-  },
-  {
-    id: 'followers',
-    method: 'GET',
-    path: '/api/followers/{handle}',
-    label: 'Followers',
-    defaultPathParam: 'elonmusk',
-    extraParams: [{ name: 'limit', default: '5', label: 'Limit' }],
-    description: "Fetch a user's followers list.",
+    group: 'user',
   },
   {
     id: 'about',
     method: 'GET',
     path: '/api/about/{handle}',
     label: 'About',
+    shortLabel: 'about',
     defaultPathParam: 'elonmusk',
-    description: 'Fetch extended profile metadata.',
+    description: 'Fetch extended profile metadata (location, account source, etc.).',
+    group: 'user',
+  },
+  {
+    id: 'followers',
+    method: 'GET',
+    path: '/api/followers/{handle}',
+    label: 'Followers',
+    shortLabel: 'followers',
+    defaultPathParam: 'elonmusk',
+    extraParams: [{ name: 'limit', default: '5', label: 'Limit' }],
+    description: "Fetch a user's followers list.",
+    group: 'user',
+  },
+  {
+    id: 'following',
+    method: 'GET',
+    path: '/api/following/{handle}',
+    label: 'Following',
+    shortLabel: 'following',
+    defaultPathParam: 'elonmusk',
+    extraParams: [{ name: 'limit', default: '5', label: 'Limit' }],
+    description: "Fetch a user's following list.",
+    group: 'user',
+  },
+  // Tweet endpoints
+  {
+    id: 'status',
+    method: 'GET',
+    path: '/api/status/{id}',
+    label: 'Status',
+    shortLabel: 'status',
+    defaultPathParam: '2110438877274259488',
+    description: 'Fetch a single tweet by ID.',
+    group: 'tweet',
+  },
+  {
+    id: 'timeline',
+    method: 'GET',
+    path: '/api/timeline/{handle}',
+    label: 'Timeline',
+    shortLabel: 'timeline',
+    defaultPathParam: 'NASA',
+    extraParams: [{ name: 'limit', default: '5', label: 'Limit' }],
+    description: "Fetch a user's recent tweets.",
+    group: 'user',
+  },
+  {
+    id: 'replies',
+    method: 'GET',
+    path: '/api/replies/{id}',
+    label: 'Replies',
+    shortLabel: 'replies',
+    defaultPathParam: '2110438877274259488',
+    description: 'Fetch the full conversation (root + thread + replies).',
+    group: 'tweet',
+  },
+  {
+    id: 'thread',
+    method: 'GET',
+    path: '/api/thread/{id}',
+    label: 'Thread',
+    shortLabel: 'thread',
+    defaultPathParam: '2110438877274259488',
+    description: 'Fetch an unrolled thread (same-author follow-ups).',
+    group: 'tweet',
+  },
+  {
+    id: 'reposts',
+    method: 'GET',
+    path: '/api/reposts/{id}',
+    label: 'Reposts',
+    shortLabel: 'reposts',
+    defaultPathParam: '2110438877274259488',
+    description: 'Fetch the list of users who reposted a tweet.',
+    group: 'tweet',
+  },
+  {
+    id: 'media',
+    method: 'GET',
+    path: '/api/media/{handle}',
+    label: 'Media',
+    shortLabel: 'media',
+    defaultPathParam: 'elonmusk',
+    extraParams: [{ name: 'limit', default: '5', label: 'Limit' }],
+    description: "Fetch a user's media-only timeline.",
+    group: 'user',
+  },
+  {
+    id: 'mentions',
+    method: 'GET',
+    path: '/api/mentions/{handle}',
+    label: 'Mentions',
+    shortLabel: 'mentions',
+    defaultPathParam: 'elonmusk',
+    extraParams: [{ name: 'limit', default: '5', label: 'Limit' }],
+    description: "Fetch a user's recent replies (mentions of parent's author).",
+    group: 'user',
+  },
+  // Search
+  {
+    id: 'search',
+    method: 'GET',
+    path: '/api/search/users',
+    label: 'Search users',
+    shortLabel: 'search',
+    defaultPathParam: '',
+    extraParams: [{ name: 'q', default: 'blitzlabx', label: 'Query' }],
+    description: 'Search for users via typeahead.',
+    group: 'trends',
+  },
+  // Trends
+  {
+    id: 'trends',
+    method: 'GET',
+    path: '/api/trends',
+    label: 'Trends',
+    shortLabel: 'trends',
+    defaultPathParam: '',
+    description: 'Fetch current trending topics.',
+    group: 'trends',
+  },
+  // Health
+  {
+    id: 'health',
+    method: 'GET',
+    path: '/health',
+    label: 'Health',
+    shortLabel: 'health',
+    defaultPathParam: '',
+    description: 'Service health check — version, uptime, rate limit.',
+    group: 'health',
   },
 ];
 
+const GROUP_LABELS: Record<EndpointDef['group'], string> = {
+  user: 'User',
+  tweet: 'Tweet',
+  trends: 'Trends & Search',
+  health: 'Service',
+};
+
 /**
- * LivePlayground — interactive API explorer.
- * Evolved: glass surfaces, animated response transitions, mobile-first layout,
- * better empty/loading states, URL bar with copy, request timing visualization.
+ * LivePlayground v2 — interactive API explorer.
+ *
+ * Evolved for v2:
+ *   - All 14 endpoints available (was 8)
+ *   - Search box to filter endpoints
+ *   - Mobile-first horizontal snap-scroll for endpoint picker
+ *   - Rainbow neon animated border around terminal output
+ *   - JSON syntax highlighting with colors
+ *   - Anti-lag: response truncation + content-visibility
+ *   - URL bar with copy
+ *   - Status badge with color coding
+ *   - ⌘+Enter / Ctrl+Enter to send
  *
  * Author: Blitz (blitzlabx)
  */
@@ -105,20 +206,10 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
   const [status, setStatus] = useState<number | null>(null);
   const [durationMs, setDurationMs] = useState<number | null>(null);
   const [cached, setCached] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [query, setQuery] = useState<string>('');
 
-  // Detect mobile to switch endpoint list layout
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 1023px)');
-    const update = () => setIsMobile(mq.matches);
-    update();
-    mq.addEventListener('change', update);
-    return () => mq.removeEventListener('change', update);
-  }, []);
-
-  const endpoint = ENDPOINTS.find((e) => e.id === selectedId)!;
+  const endpoint = ALL_ENDPOINTS.find((e) => e.id === selectedId)!;
 
   const buildUrl = useCallback(() => {
     let pathOnly = endpoint.path;
@@ -137,7 +228,7 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
   }, [apiBaseUrl, endpoint, pathParam, extraParams]);
 
   const selectEndpoint = (id: string) => {
-    const ep = ENDPOINTS.find((e) => e.id === id)!;
+    const ep = ALL_ENDPOINTS.find((e) => e.id === id)!;
     setSelectedId(id);
     setPathParam(ep.defaultPathParam);
     setExtraParams({});
@@ -176,21 +267,13 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
     }
   };
 
-  const copyResponse = async () => {
-    await navigator.clipboard.writeText(response);
-    setCopied(true);
-    toast.success('Response copied to clipboard');
-    setTimeout(() => setCopied(false), 1500);
-  };
-
   const copyUrl = async () => {
     await navigator.clipboard.writeText(buildUrl());
     setUrlCopied(true);
-    toast.success('URL copied');
     setTimeout(() => setUrlCopied(false), 1500);
   };
 
-  // Keyboard shortcut: Cmd/Ctrl+Enter to send
+  // ⌘+Enter / Ctrl+Enter to send
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
@@ -200,11 +283,32 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [loading, buildUrl]);
+  }, [loading, buildUrl, sendRequest]);
+
+  // Filter endpoints by search query
+  const filteredEndpoints = ALL_ENDPOINTS.filter((ep) => {
+    if (!query.trim()) return ep;
+    const q = query.toLowerCase();
+    return (
+      ep.label.toLowerCase().includes(q) ||
+      ep.path.toLowerCase().includes(q) ||
+      ep.id.toLowerCase().includes(q) ||
+      ep.description.toLowerCase().includes(q)
+    );
+  });
+
+  // Group filtered endpoints
+  const groupedEndpoints = filteredEndpoints.reduce<Record<string, EndpointDef[]>>(
+    (acc, ep) => {
+      (acc[ep.group] ||= []).push(ep);
+      return acc;
+    },
+    {},
+  );
 
   const statusColor =
     status === null
-      ? ''
+      ? 'border-border text-muted-foreground'
       : status >= 200 && status < 300
       ? 'border-[var(--blitz)] text-[var(--blitz)] bg-[var(--blitz)]/10'
       : status >= 400 && status < 500
@@ -212,48 +316,69 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
       : 'border-destructive text-destructive bg-destructive/10';
 
   return (
-    <div className="grid gap-3 sm:gap-4 lg:grid-cols-[240px_1fr] lg:gap-5">
-      {/* Endpoint list — horizontal scroll on mobile, vertical on desktop */}
-      <div className="flex flex-row gap-1.5 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0 blitz-scroll-x">
-        <div className="mb-2 hidden shrink-0 items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground lg:flex">
-          <Terminal className="h-3 w-3" />
-          Endpoints
+    <div className="grid gap-3 sm:gap-4 lg:grid-cols-[260px_1fr] lg:gap-5">
+      {/* ─── Endpoint picker ─── */}
+      <aside className="flex flex-col gap-2">
+        {/* Search box */}
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search 14 endpoints…"
+            className="blitz-glass w-full rounded-lg py-2 pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-[var(--blitz)]"
+            aria-label="Search endpoints"
+          />
         </div>
-        {ENDPOINTS.map((ep) => {
-          const active = ep.id === selectedId;
-          return (
-            <button
-              key={ep.id}
-              onClick={() => selectEndpoint(ep.id)}
-              className={`group relative flex shrink-0 items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-all lg:w-full ${
-                active
-                  ? 'border-[var(--blitz)] bg-[var(--blitz)]/10 text-[var(--blitz)] shadow-[0_0_0_1px_var(--blitz-glow)]'
-                  : 'border-transparent hover:border-border hover:bg-card/50'
-              }`}
-              style={{ scrollSnapAlign: 'start' }}
-            >
-              <span className="font-mono">{ep.label}</span>
-              <span
-                className={`text-[10px] uppercase ${active ? 'text-[var(--blitz)]' : 'text-muted-foreground'}`}
-              >
-                {ep.method}
-              </span>
-              {active && (
-                <motion.span
-                  layoutId="endpoint-active-indicator"
-                  className="absolute left-0 top-1/2 hidden h-6 w-[2px] -translate-y-1/2 rounded-full bg-[var(--blitz)] lg:block"
-                />
-              )}
-            </button>
-          );
-        })}
-      </div>
 
-      {/* Right panel: request + response */}
-      <div className="flex flex-col gap-3 sm:gap-4">
+        {/* Endpoint list — horizontal snap-scroll on mobile, grouped vertical on desktop */}
+        <div className="blitz-scroll-x flex gap-1.5 pb-1 lg:block lg:space-y-3 lg:overflow-visible lg:pb-0">
+          {Object.entries(groupedEndpoints).map(([group, eps]) => (
+            <div key={group} className="lg:space-y-1">
+              <div className="mb-1 hidden px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 lg:block">
+                {GROUP_LABELS[group as EndpointDef['group']]}
+              </div>
+              <div className="flex gap-1.5 lg:block lg:space-y-1">
+                {eps.map((ep) => {
+                  const active = ep.id === selectedId;
+                  return (
+                    <button
+                      key={ep.id}
+                      onClick={() => selectEndpoint(ep.id)}
+                      className={`group relative flex shrink-0 items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-xs transition-all lg:w-full ${
+                        active
+                          ? 'border-[var(--blitz)] bg-[var(--blitz)]/10 text-[var(--blitz)] shadow-[0_0_0_1px_var(--blitz-glow)]'
+                          : 'border-border/40 bg-card/40 text-muted-foreground hover:border-[var(--blitz)]/40 hover:bg-card/60 hover:text-foreground'
+                      }`}
+                      style={{ scrollSnapAlign: 'start' }}
+                    >
+                      <span className="font-mono">{ep.label}</span>
+                      <span
+                        className={`text-[9px] uppercase tracking-wider ${active ? 'text-[var(--blitz)]' : 'text-muted-foreground/60'}`}
+                      >
+                        {ep.method}
+                      </span>
+                      {active && (
+                        <motion.span
+                          layoutId="endpoint-active-bar"
+                          className="absolute left-0 top-1/2 hidden h-5 w-[2px] -translate-y-1/2 rounded-full bg-[var(--blitz)] lg:block"
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </aside>
+
+      {/* ─── Right panel: request + response ─── */}
+      <div className="flex min-w-0 flex-col gap-3 sm:gap-4">
         {/* Request builder */}
         <div className="blitz-glass rounded-xl p-3 sm:p-5">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <div className="flex min-w-0 flex-wrap items-center gap-2 text-xs">
               <Badge
                 variant="outline"
@@ -261,7 +386,9 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
               >
                 {endpoint.method}
               </Badge>
-              <code className="blitz-code truncate text-foreground/90">{endpoint.path}</code>
+              <code className="blitz-code min-w-0 truncate text-foreground/90 blitz-break-anywhere">
+                {endpoint.path}
+              </code>
             </div>
             <Button
               size="sm"
@@ -275,7 +402,7 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
                 <Play className="mr-1.5 h-3.5 w-3.5" />
               )}
               Send
-              <span className="ml-2 hidden text-[10px] opacity-60 sm:inline">⌘↵</span>
+              <kbd className="ml-2 hidden text-[10px] opacity-60 sm:inline">⌘↵</kbd>
             </Button>
           </div>
           <p className="mb-4 text-xs text-muted-foreground">{endpoint.description}</p>
@@ -318,8 +445,10 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
           </div>
 
           {/* URL bar with copy */}
-          <div className="mt-4 flex items-center gap-2 rounded-lg border border-border bg-background/60 px-3 py-2">
-            <span className="shrink-0 text-xs font-mono text-muted-foreground">URL</span>
+          <div className="mt-4 flex items-center gap-2 rounded-lg border border-border/60 bg-background/60 px-3 py-2">
+            <span className="shrink-0 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+              URL
+            </span>
             <code className="blitz-code min-w-0 flex-1 truncate text-xs text-[var(--blitz)]">
               {buildUrl()}
             </code>
@@ -329,19 +458,29 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
               aria-label="Copy URL"
             >
               {urlCopied ? (
-                <Check className="h-3.5 w-3.5 text-[var(--blitz)]" />
+                <span className="text-[10px] text-[var(--blitz)]">copied!</span>
               ) : (
-                <Copy className="h-3.5 w-3.5" />
+                <span className="text-[10px]">copy</span>
               )}
             </button>
           </div>
         </div>
 
-        {/* Response viewer */}
-        <div className="blitz-glass rounded-xl p-3 sm:p-5">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <div className="flex min-w-0 flex-wrap items-center gap-2">
-              <span className="text-muted-foreground">Response</span>
+        {/* Response viewer — terminal with rainbow neon border */}
+        <RainbowTerminal>
+          {/* Terminal header (mac-style dots + status) */}
+          <div className="blitz-terminal-header">
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="blitz-terminal-dots" aria-hidden>
+                <span style={{ background: '#ff5f56' }} />
+                <span style={{ background: '#ffbd2e' }} />
+                <span style={{ background: '#27c93f' }} />
+              </span>
+              <span className="truncate font-mono text-[10px] uppercase tracking-wider text-muted-foreground sm:text-xs">
+                response · {endpoint.shortLabel}
+              </span>
+            </div>
+            <div className="flex shrink-0 items-center gap-2">
               <AnimatePresence mode="wait">
                 {status !== null && (
                   <motion.div
@@ -349,81 +488,63 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.18 }}
                   >
-                    <Badge variant="outline" className={statusColor}>
+                    <Badge variant="outline" className={`text-[10px] ${statusColor}`}>
                       {status === 0 ? 'NET' : status}
                     </Badge>
                   </motion.div>
                 )}
               </AnimatePresence>
               {durationMs !== null && (
-                <span className="text-muted-foreground">
+                <span className="font-mono text-[10px] text-muted-foreground">
                   <span className="text-foreground/80">{durationMs}ms</span>
                 </span>
               )}
               {cached && (
-                <Badge variant="outline" className="text-[10px] uppercase">
+                <Badge variant="outline" className="text-[9px] uppercase">
                   cache: {cached}
                 </Badge>
               )}
               {loading && (
-                <span className="flex items-center gap-1 text-muted-foreground">
-                  <Loader2 className="h-3 w-3 animate-spin" />
+                <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                  <Loader2 className="h-2.5 w-2.5 animate-spin" />
                   fetching…
                 </span>
               )}
             </div>
-            {response && (
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={copyResponse}
-                className="h-7 shrink-0 text-xs"
-              >
-                {copied ? (
-                  <Check className="mr-1 h-3 w-3 text-[var(--blitz)]" />
-                ) : (
-                  <Copy className="mr-1 h-3 w-3" />
-                )}
-                <span className="hidden sm:inline">{copied ? 'Copied' : 'Copy'}</span>
-              </Button>
-            )}
           </div>
 
-          {/* Response body — uses a real <pre> so long lines wrap properly */}
-          <div className="relative">
-            <pre className="blitz-code max-h-[420px] min-h-[280px] overflow-auto rounded-lg bg-background/60 p-3 text-[11px] leading-relaxed sm:text-xs blitz-scroll-x">
-              <AnimatePresence mode="wait">
-                {response ? (
-                  <motion.code
-                    key={response.slice(0, 50) + status}
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.18 }}
-                    className="block whitespace-pre-wrap break-words blitz-break-anywhere"
-                  >
-                    {response}
-                  </motion.code>
-                ) : (
-                  <span className="text-muted-foreground">
-                    {loading ? 'Loading…' : '// Press "Send" or ⌘+Enter to make a request'}
-                  </span>
-                )}
-              </AnimatePresence>
-            </pre>
+          {/* Output viewport — virtualization-safe */}
+          <div className="blitz-output-viewport">
+            <BlitzJsonViewer text={response} loading={loading} />
           </div>
 
-          {/* Footer hint */}
-          <div className="mt-3 flex items-center justify-between text-[10px] text-muted-foreground/70">
+          {/* Footer */}
+          <div className="flex items-center justify-between border-t border-border/60 bg-card/40 px-3 py-1.5 text-[10px] text-muted-foreground/70">
             <span className="flex items-center gap-1">
-              <Zap className="h-3 w-3" />
-              Powered by blitzyxsc-plus
+              <Zap className="h-2.5 w-2.5" />
+              blitzyxsc-plus
             </span>
-            <span>{isMobile ? 'Tap Send to run' : '⌘+Enter to send'}</span>
+            <span className="hidden sm:inline">⌘+Enter to send</span>
+            <span className="sm:hidden">tap Send</span>
           </div>
-        </div>
+        </RainbowTerminal>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * RainbowTerminal — wraps children in a terminal-styled container
+ * with an animated rainbow neon border.
+ */
+function RainbowTerminal({ children }: { children: React.ReactNode }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  return (
+    <div ref={containerRef} className="blitz-rainbow-border rounded-xl">
+      <div className="blitz-terminal blitz-glass-strong relative rounded-xl">
+        {children}
       </div>
     </div>
   );

@@ -3,19 +3,16 @@
 - Network:       http://21.0.21.71:3000
 
 ✓ Starting...
-Attention: Next.js now collects completely anonymous telemetry regarding usage.
-This information is used to shape Next.js' roadmap and prioritize features.
-You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
-https://nextjs.org/telemetry
-
-✓ Ready in 752ms
+✓ Ready in 664ms
 ○ Compiling / ...
- GET / 200 in 132ms (compile: 3ms, render: 128ms)
- GET / 200 in 53ms (compile: 3ms, render: 50ms)
- GET /robots.txt 200 in 419ms (compile: 407ms, render: 12ms)
- GET /manifest.webmanifest 200 in 113ms (compile: 109ms, render: 4ms)
- GET /sitemap.xml 200 in 95ms (compile: 90ms, render: 4ms)
-(node:2889) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+ GET / 200 in 131ms (compile: 4ms, render: 127ms)
+ GET / 200 in 53ms (compile: 3ms, render: 51ms)
+ GET /docs 200 in 1038ms (compile: 966ms, render: 72ms)
+ GET /robots.txt 200 in 420ms (compile: 409ms, render: 11ms)
+ GET /manifest.webmanifest 200 in 110ms (compile: 105ms, render: 5ms)
+ GET /sitemap.xml 200 in 99ms (compile: 95ms, render: 4ms)
+(node:4038) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
 (Use `node --trace-deprecation ...` to show where the warning was created)
- GET / 200 in 61ms (compile: 4ms, render: 57ms)
+ GET / 200 in 78ms (compile: 4ms, render: 74ms)
+ GET /docs 200 in 70ms (compile: 3ms, render: 68ms)
 [?25h

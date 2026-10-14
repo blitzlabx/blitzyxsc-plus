@@ -45,7 +45,7 @@ function Nav() {
     { href: '#playground', label: 'Playground' },
     { href: '#endpoints', label: 'Endpoints' },
     { href: '#deploy', label: 'Deploy' },
-    { href: '#usage', label: 'Usage' },
+    { href: '/docs', label: 'Docs' },
   ];
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/50">
@@ -171,9 +171,7 @@ function HeroSection() {
         >
           <div className="inline-flex items-center gap-2 rounded-full border border-[var(--blitz)]/30 bg-[var(--blitz)]/5 px-3 py-1 text-xs backdrop-blur-sm sm:px-4 sm:py-1.5">
             <BlitzStatusDot />
-            <span className="text-muted-foreground">
-              v1.1.0 · live, no auth
-            </span>
+            <span className="text-muted-foreground">v2.0.0 · live, no auth</span>
           </div>
         </motion.div>
 
@@ -727,11 +725,14 @@ function FooterSection() {
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:gap-6">
           <div className="flex items-center gap-2 text-xs text-muted-foreground sm:text-sm">
             <BlitzBolt className="h-5 w-5 text-[var(--blitz)]" />
-            <span className="blitz-code">blitzyxsc-plus v1.1.0</span>
+            <span className="blitz-code">blitzyxsc-plus v2.0.0</span>
             <span className="text-muted-foreground/60">·</span>
             <span>MIT</span>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground sm:gap-4 sm:text-sm">
+            <a href="/docs" className="transition-colors hover:text-[var(--blitz)]">
+              Docs
+            </a>
             <a href="https://github.com/blitzlabx/blitzyxsc-plus" className="transition-colors hover:text-[var(--blitz)]">
               GitHub
             </a>
