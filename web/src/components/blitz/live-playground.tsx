@@ -316,11 +316,11 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
       : 'border-destructive text-destructive bg-destructive/10';
 
   return (
-    <div className="grid gap-3 sm:gap-4 lg:grid-cols-[260px_1fr] lg:gap-5">
+    <div className="grid w-full min-w-0 gap-3 sm:gap-4 lg:grid-cols-[260px_1fr] lg:gap-5">
       {/* ─── Endpoint picker ─── */}
-      <aside className="flex flex-col gap-2">
+      <aside className="flex min-w-0 flex-col gap-2">
         {/* Search box */}
-        <div className="relative">
+        <div className="relative shrink-0">
           <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
           <input
             type="search"
@@ -332,43 +332,41 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
           />
         </div>
 
-        {/* Endpoint list — horizontal snap-scroll on mobile, grouped vertical on desktop */}
-        <div className="blitz-scroll-x flex gap-1.5 pb-1 lg:block lg:space-y-3 lg:overflow-visible lg:pb-0">
+        {/* Endpoint list — free horizontal scroll on mobile, grouped vertical on desktop */}
+        <div className="blitz-scroll-x -mx-1 gap-1.5 px-1 lg:mx-0 lg:block lg:space-y-3 lg:overflow-visible lg:px-0">
           {Object.entries(groupedEndpoints).map(([group, eps]) => (
-            <div key={group} className="lg:space-y-1">
+            <div key={group} className="flex shrink-0 gap-1.5 lg:block lg:space-y-1">
               <div className="mb-1 hidden px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 lg:block">
                 {GROUP_LABELS[group as EndpointDef['group']]}
               </div>
-              <div className="flex gap-1.5 lg:block lg:space-y-1">
-                {eps.map((ep) => {
-                  const active = ep.id === selectedId;
-                  return (
-                    <button
-                      key={ep.id}
-                      onClick={() => selectEndpoint(ep.id)}
-                      className={`group relative flex shrink-0 items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-xs transition-all lg:w-full ${
-                        active
-                          ? 'border-[var(--blitz)] bg-[var(--blitz)]/10 text-[var(--blitz)] shadow-[0_0_0_1px_var(--blitz-glow)]'
-                          : 'border-border/40 bg-card/40 text-muted-foreground hover:border-[var(--blitz)]/40 hover:bg-card/60 hover:text-foreground'
-                      }`}
-                      style={{ scrollSnapAlign: 'start' }}
+              {eps.map((ep) => {
+                const active = ep.id === selectedId;
+                return (
+                  <button
+                    key={ep.id}
+                    onClick={() => selectEndpoint(ep.id)}
+                    className={`group relative flex shrink-0 items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-xs transition-all lg:w-full ${
+                      active
+                        ? 'border-[var(--blitz)] bg-[var(--blitz)]/10 text-[var(--blitz)] shadow-[0_0_0_1px_var(--blitz-glow)]'
+                        : 'border-border/40 bg-card/40 text-muted-foreground hover:border-[var(--blitz)]/40 hover:bg-card/60 hover:text-foreground'
+                    }`}
+                    style={{ scrollSnapAlign: 'start' }}
+                  >
+                    <span className="font-mono whitespace-nowrap">{ep.label}</span>
+                    <span
+                      className={`text-[9px] uppercase tracking-wider ${active ? 'text-[var(--blitz)]' : 'text-muted-foreground/60'}`}
                     >
-                      <span className="font-mono">{ep.label}</span>
-                      <span
-                        className={`text-[9px] uppercase tracking-wider ${active ? 'text-[var(--blitz)]' : 'text-muted-foreground/60'}`}
-                      >
-                        {ep.method}
-                      </span>
-                      {active && (
-                        <motion.span
-                          layoutId="endpoint-active-bar"
-                          className="absolute left-0 top-1/2 hidden h-5 w-[2px] -translate-y-1/2 rounded-full bg-[var(--blitz)] lg:block"
-                        />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+                      {ep.method}
+                    </span>
+                    {active && (
+                      <motion.span
+                        layoutId="endpoint-active-bar"
+                        className="absolute left-0 top-1/2 hidden h-5 w-[2px] -translate-y-1/2 rounded-full bg-[var(--blitz)] lg:block"
+                      />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           ))}
         </div>
@@ -540,10 +538,9 @@ export function LivePlayground({ apiBaseUrl }: { apiBaseUrl: string }) {
  * with an animated rainbow neon border.
  */
 function RainbowTerminal({ children }: { children: React.ReactNode }) {
-  const containerRef = useRef<HTMLDivElement>(null);
   return (
-    <div ref={containerRef} className="blitz-rainbow-border rounded-xl">
-      <div className="blitz-terminal blitz-glass-strong relative rounded-xl">
+    <div className="blitz-rainbow-border min-w-0 rounded-xl">
+      <div className="blitz-terminal blitz-glass-strong relative z-[1] min-w-0 overflow-hidden rounded-xl">
         {children}
       </div>
     </div>
